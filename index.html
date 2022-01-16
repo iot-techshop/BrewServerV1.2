@@ -1,0 +1,280 @@
+<!DOCTYPE HTML><html>
+<!-- Rui Santos - Complete project details at https://RandomNerdTutorials.com
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software. -->
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <style>
+    body {
+      min-width: 310px;
+    	max-width: 800px;
+    	height: 400px;
+      margin: 0 auto;
+    }
+    h2 {
+      font-family: Arial;
+      font-size: 2.5rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h2><center>Brew Station</center></h2>
+  
+  <p>
+    
+	<p><center><font size="5">Dev ID: </font><font size="4"><strong> <span id="devID">%IDDEVICE%</span></strong></font></center></p>
+	
+	    
+    </p>
+  <p><center><font size="5">
+    
+	 <i class="fas fa-tint" style="color:#00add6;"></i> 
+	<span class="dht-labels">Bloops/Min:</span>
+    <span id="mybpm">%BPM%</span>
+    <sup class="units">BPM&nbsp &nbsp &nbsp &nbsp</sup>
+	 <i class="fas fa-tint" style="color:#00add6;"></i> 
+	<span class="dht-labels">Bloops Total:</span>
+    <span id="mytotal">%BLOOPS%</span>
+    <sup class="units">Cts&nbsp &nbsp &nbsp &nbsp </sup>
+	<i class="fas fa-thermometer-half" style="color:#ff0000;"></i>
+	
+    <span class="dht-labels">Temp:</span> 
+    <span id="mytemp">%TEMPERATURE%</span>
+    <sup class="units">&deg;F </sup>
+	</center>
+	</font>
+  </p>
+  <div id="chart-ltBPM" class="container"></div>
+  <div id="chart-temperature" class="container"></div>
+  <div id="chart-2hrBPM" class="container"></div>  
+  <div id="chart-ttlBloops" class="container"></div>
+</body>
+<script>
+ 
+var chartA = new Highcharts.Chart({
+  chart:{ renderTo : 'chart-ltBPM' },
+  title: { text: 'Bloop Rate - 3 Weeks' },
+  series: [{
+    showInLegend: false,
+    data: []
+  }],
+  plotOptions: {
+    line: { animation: false,
+      dataLabels: { enabled: false }
+    },
+    series: { color: '#FFC300' }
+  },
+  xAxis: { type: 'datetime',
+    dateTimeLabelFormats: { second: '%D:%H:%M:%S' }
+  },
+  yAxis: {
+    title: { text: 'Bloops per Min' }
+    //title: { text: 'Temperature (Fahrenheit)' }
+  },
+  credits: { enabled: false }
+});
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var x = (new Date()).getTime(),
+          y = parseFloat(this.responseText);
+      //console.log(this.responseText);
+      if(chartA.series[0].data.length > 6048) {
+        chartA.series[0].addPoint([x, y], true, true, true);
+      } else {
+        chartA.series[0].addPoint([x, y], true, false, true);
+      }
+    }
+  };
+  xhttp.open("GET", "/ltBPM", true);
+  xhttp.send();
+}, 300000 ) ;
+
+var chartB = new Highcharts.Chart({
+  chart:{ renderTo:'chart-2hrBPM' },
+  title: { text: 'Bloop Rate - Last 4 Hours' },
+  series: [{
+    showInLegend: false,
+    data: []
+  }],
+  plotOptions: {
+    line: { animation: false,
+      dataLabels: { enabled: false }
+    },
+	series: { color: '#109531' }
+  },
+  xAxis: {
+    type: 'datetime',
+    dateTimeLabelFormats: { second: '%H:%M:%S' }
+  },
+  yAxis: {
+    title: { text: 'Bloops per Minute' }
+  },
+  credits: { enabled: false }
+});
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var x = (new Date()).getTime(),
+          y = parseFloat(this.responseText);
+      //console.log(this.responseText);
+      if(chartB.series[0].data.length > 50) {
+        chartB.series[0].addPoint([x, y], true, true, true);
+      } else {
+        chartB.series[0].addPoint([x, y], true, false, true);
+      }
+    }
+  };
+  xhttp.open("GET", "/2hrBPM", true);
+  xhttp.send();
+}, 300000 ) ;
+
+var chartC = new Highcharts.Chart({
+  chart:{ renderTo:'chart-temperature' },
+  title: { text: 'Temperature' },
+  series: [{
+    showInLegend: false,
+    data: []
+  }],
+  plotOptions: {
+    line: { animation: false,
+      dataLabels: { enabled: false }
+    },
+    series: { color: '#EA3610' }
+  },
+  xAxis: {
+    type: 'datetime',
+    dateTimeLabelFormats: { second: '%H:%M:%S' }
+  },
+  yAxis: {
+    title: { text: 'Degrees F' }
+  },
+  credits: { enabled: false }
+});
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var x = (new Date()).getTime(),
+          y = parseFloat(this.responseText);
+      //console.log(this.responseText);
+      if(chartC.series[0].data.length > 6048) {
+        chartC.series[0].addPoint([x, y], true, true, true);
+      } else {
+        chartC.series[0].addPoint([x, y], true, false, true);
+      }
+    }
+  };
+  xhttp.open("GET", "/temperature", true);
+  xhttp.send();
+},300000 ) ;
+
+var chartD = new Highcharts.Chart({
+  chart:{ renderTo:'chart-ttlBloops' },
+  title: { text: 'Total Bloops' },
+  series: [{
+    showInLegend: false,
+    data: []
+  }],
+  plotOptions: {
+    line: { animation: false,
+      dataLabels: { enabled: false }
+    },
+    series: { color: '#0B42A5 ' }
+  },
+  xAxis: {
+    type: 'datetime',
+    dateTimeLabelFormats: { second: '%H:%M:%S' }
+  },
+  yAxis: {
+    title: { text: 'Bloops' }
+  },
+  credits: { enabled: false }
+});
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var x = (new Date()).getTime(),
+          y = parseFloat(this.responseText);
+      //console.log(this.responseText);
+      if(chartD.series[0].data.length > 100) {
+        chartD.series[0].addPoint([x, y], true, true, true);
+      } else {
+        chartD.series[0].addPoint([x, y], true, false, true);
+      }
+    }
+  };
+  xhttp.open("GET", "/ttlBloops", true);
+  xhttp.send();
+},300000 ) ;
+
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("mytemp").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("GET", "/temperature", true);
+  xhttp.send();
+}, 10000 ) ;
+
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("mybpm").innerHTML = this.responseText;	 
+    }
+	
+  };
+  xhttp.open("GET", "/2hrBPM", true);
+  xhttp.send();
+}, 11000 ) ;
+
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("mytotal").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("GET", "/ttlBloops", true);
+  xhttp.send();
+}, 10000) ;
+
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("mytotal").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("GET", "/ttlBloops", true);
+  xhttp.send();
+}, 10000 ) ;
+
+
+
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("devID").innerHTML = this.responseText;
+    }
+		
+  };
+  xhttp.open("GET", "/devID", true);
+  xhttp.send();
+}, 5000 ) ;
+</script>
+</html>
