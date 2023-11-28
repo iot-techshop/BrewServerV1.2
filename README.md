@@ -2,7 +2,7 @@
 A Beer Brewing wireless fermentation monitor
 
 Code is functional.  
-Feel free to modify or ask qusetions on Facebook in our "IoT Tech Shop" group https://www.facebook.com/groups/3188341227932417/ or Bill's Brews group at https://www.facebook.com/groups/1192890997887938/
+Feel free to modify or ask qusetions on Facebook in our "IoT Tech Shop" group https://www.facebook.com/groups/3188341227932417/ or Road Runner Ranch Brewing group at https://www.facebook.com/groups/1192890997887938/
 
 Also, the index.html file must be loaded in the data section of your Arduino project and uploaded to your ESP32 using "ESP32 Sketch Data Upload"under Tools.  This is the webpage being served up by the ESP32.  You can modify that to your liking.  The data update times are controlled by the web page from the browser.
 
